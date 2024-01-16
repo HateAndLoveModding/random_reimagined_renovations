@@ -5,7 +5,7 @@
     "AA"
   ],
   "key": {
-    "A": { "item": "redstone_reimagined_renovations:ice_cubes" }
+    "A": { "item": "random_reimagined_renovations:ice_cubes" }
   },
   "result": {
     "item": "minecraft:ice",

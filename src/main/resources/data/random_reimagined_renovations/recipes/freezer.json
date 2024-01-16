@@ -7,10 +7,10 @@
   ],
   "key": {
     "A": { "item": "minecraft:iron_ingot" },
-    "B": { "item": "redstone_reimagined_renovations:radiator" }
+    "B": { "item": "random_reimagined_renovations:radiator" }
   },
   "result": {
-    "item": "redstone_reimagined_renovations:freezer",
+    "item": "random_reimagined_renovations:freezer",
     "count": 1
   }
 }

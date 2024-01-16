@@ -1,11 +1,11 @@
 {
-  "block.redstone_reimagined_renovations.freezer": "Freezer",
-  "block.redstone_reimagined_renovations.tnt_duper": "Tnt Duper",
-  "block.redstone_reimagined_renovations.bedrock_breaker": "Bedrock Breaker",
-  "item.redstone_reimagined_renovations.infinite_agua_bucket": "Infinite Water Bucket",
-  "item.redstone_reimagined_renovations.finite_agua_bucket": "Finite Water Bucket",
-  "item.redstone_reimagined_renovations.fan": "Fan",
-  "item.redstone_reimagined_renovations.radiator": "Radiator",
-  "item.redstone_reimagined_renovations.ice_cubes": "Ice Cubes",
-  "item.redstone_reimagined_renovations.ice_tray": "Ice Tray"
+  "block.random_reimagined_renovations.freezer": "Freezer",
+  "block.random_reimagined_renovations.tnt_duper": "Tnt Duper",
+  "block.random_reimagined_renovations.bedrock_breaker": "Bedrock Breaker",
+  "item.random_reimagined_renovations.infinite_agua_bucket": "Infinite Water Bucket",
+  "item.random_reimagined_renovations.finite_agua_bucket": "Finite Water Bucket",
+  "item.random_reimagined_renovations.fan": "Fan",
+  "item.random_reimagined_renovations.radiator": "Radiator",
+  "item.random_reimagined_renovations.ice_cubes": "Ice Cubes",
+  "item.random_reimagined_renovations.ice_tray": "Ice Tray"
 }

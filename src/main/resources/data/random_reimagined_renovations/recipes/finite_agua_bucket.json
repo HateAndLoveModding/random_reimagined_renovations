@@ -8,7 +8,7 @@
     "A": { "item": "minecraft:bucket" }
   },
   "result": {
-    "item": "redstone_reimagined_renovations:finite_agua_bucket",
+    "item": "random_reimagined_renovations:finite_agua_bucket",
     "count": 1
   }
 }

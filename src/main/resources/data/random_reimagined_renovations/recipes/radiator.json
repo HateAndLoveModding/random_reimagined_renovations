@@ -7,11 +7,11 @@
   ],
   "key": {
     "A": { "item": "minecraft:water_bucket" },
-    "B": { "item": "redstone_reimagined_renovations:fan" },
+    "B": { "item": "random_reimagined_renovations:fan" },
     "C": { "item": "minecraft:iron_ingot" }
   },
   "result": {
-    "item": "redstone_reimagined_renovations:radiator",
+    "item": "random_reimagined_renovations:radiator",
     "count": 1
   }
 }
