@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "B B",
+    "ABA"
+  ],
+  "key": {
+    "A": { "item": "minecraft:iron_bars" },
+    "B": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "item": "redstone_reimagined_renovations:fan",
+    "count": 1
+  }
+}

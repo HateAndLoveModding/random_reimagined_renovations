@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "random_reimagined_renovations",
+	"version": "${version}",
+	"name": "Random Reimagined Renovations",
+	"description": "Elevate your redstone this Minecraft mod that introduces innovative tweaks to dispensers, TNT, and bedrock.",
+	"authors": [
+		"PixelPioneer"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/villagers-empowered",
+		"sources": "https://github.com/HateAndLoveModding/villagers_empowered-FABRIC"
+	},
+	"license": "CC BY-NC-SA",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.example.random_reimagined_renovations.RandomReimaginedRenovations"
+		],
+		"client": [
+			"com.example.random_reimagined_renovations.RandomReimaginedRenovationsClient"
+		]
+	},
+	"mixins": [
+		"random_reimagined_renovations.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": ">=1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

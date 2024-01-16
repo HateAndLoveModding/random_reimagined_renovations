@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "A A",
+    "B B",
+    "CCC"
+  ],
+  "key": {
+    "A": { "item": "minecraft:water_bucket" },
+    "B": { "item": "redstone_reimagined_renovations:fan" },
+    "C": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "item": "redstone_reimagined_renovations:radiator",
+    "count": 1
+  }
+}

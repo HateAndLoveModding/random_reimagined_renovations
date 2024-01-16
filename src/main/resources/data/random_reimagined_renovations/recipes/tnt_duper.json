@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ACA",
+    "BEB",
+    "CDC"
+  ],
+  "key": {
+    "A": { "tag": "minecraft:trap_doors" },
+    "B": { "item": "minecraft:sticky_piston" },
+    "C": { "item": "minecraft:tnt" },
+    "D": { "item": "minecraft:obsidian" },
+    "E": { "item": "minecraft:redstone_block" }
+  },
+  "result": {
+    "item": "redstone_reimagined_renovations:tnt_duper",
+    "count": 1
+  }
+}
