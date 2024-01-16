@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RandomReimaginedRenovations implements ModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("redstone_reimagined_renovations");
-	public static final String MOD_ID = "redstone_reimagined_renovations";
+    public static final Logger LOGGER = LoggerFactory.getLogger("random_reimagined_renovations");
+	public static final String MOD_ID = "random_reimagined_renovations";
 	private static final DispenserBehavior customDispenserBehaviorSapling = new CustomDispenserBehavior();
 
 	public static final ScreenHandlerType<FreezerScreenHandler> FREEZER_SCREEN_HANDLER =
