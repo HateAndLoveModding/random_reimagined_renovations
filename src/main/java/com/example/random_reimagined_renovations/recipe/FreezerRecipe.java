@@ -1,24 +1,24 @@
 package com.example.random_reimagined_renovations.recipe;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.*;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
-public class FreezerRecipe implements Recipe<SimpleInventory> {
-    private final Identifier id;
-    private final ItemStack output;
-    private final DefaultedList<Ingredient> recipeItems;
+import java.util.List;
 
-    public FreezerRecipe(Identifier id, DefaultedList<Ingredient> ingredients, ItemStack itemStack) {
-        this.id = id;
+public class FreezerRecipe implements Recipe<SimpleInventory> {
+    private final ItemStack output;
+    private final List<Ingredient> recipeItems;
+
+    public FreezerRecipe(List<Ingredient> ingredients, ItemStack itemStack) {
         this.output = itemStack;
         this.recipeItems = ingredients;
     }
@@ -28,19 +28,9 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
         if(world.isClient()) {
             return false;
         }
+
         return recipeItems.get(0).test(inventory.getStack(0)) &&
                 recipeItems.get(1).test(inventory.getStack(1));
-    }
-
-    @Override
-    public Identifier getId() {
-        return id;
-    }
-
-    public static class Type implements RecipeType<FreezerRecipe> {
-        private Type() { }
-        public static final Type INSTANCE = new Type();
-        public static final String ID = "freezer";
     }
 
     @Override
@@ -54,17 +44,8 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
     }
 
     @Override
-    public ItemStack getOutput(DynamicRegistryManager registryManager) {
-        return output.copy();
-    }
-
-    public ItemStack getOutput1() {
-        return output.copy();
-    }
-
-    @Override
-    public DefaultedList<ItemStack> getRemainder(SimpleInventory inventory) {
-        return Recipe.super.getRemainder(inventory);
+    public ItemStack getResult(DynamicRegistryManager registryManager) {
+        return output;
     }
 
     @Override
@@ -72,26 +53,6 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
         DefaultedList<Ingredient> list = DefaultedList.ofSize(this.recipeItems.size());
         list.addAll(recipeItems);
         return list;
-    }
-
-    @Override
-    public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
-    }
-
-    @Override
-    public boolean showNotification() {
-        return Recipe.super.showNotification();
-    }
-
-    @Override
-    public String getGroup() {
-        return Recipe.super.getGroup();
-    }
-
-    @Override
-    public ItemStack createIcon() {
-        return Recipe.super.createIcon();
     }
 
     @Override
@@ -104,48 +65,52 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
         return Type.INSTANCE;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return Recipe.super.isEmpty();
+    public static class Type implements RecipeType<FreezerRecipe> {
+        public static final Type INSTANCE = new Type();
+        public static final String ID = "freezer";
     }
-
 
     public static class Serializer implements RecipeSerializer<FreezerRecipe> {
         public static final Serializer INSTANCE = new Serializer();
         public static final String ID = "freezer";
 
-        @Override
-        public FreezerRecipe read(Identifier id, JsonObject json) {
-            ItemStack output = ShapedRecipe.outputFromJson(JsonHelper.getObject(json, "output"));
+        public static final Codec<FreezerRecipe> CODEC = RecordCodecBuilder.create(in -> in.group(
+                validateAmount(Ingredient.DISALLOW_EMPTY_CODEC, 9).fieldOf("ingredients").forGetter(FreezerRecipe::getIngredients),
+                ItemStack.RECIPE_RESULT_CODEC.fieldOf("output").forGetter(r -> r.output)
+        ).apply(in, FreezerRecipe::new));
 
-            JsonArray ingredients = JsonHelper.getArray(json, "ingredients");
-            DefaultedList<Ingredient> inputs = DefaultedList.ofSize(2, Ingredient.EMPTY);
-
-            for (int i = 0; i < inputs.size(); i++) {
-                inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
-            }
-
-            return new FreezerRecipe(id, inputs, output);
+        private static Codec<List<Ingredient>> validateAmount(Codec<Ingredient> delegate, int max) {
+            return Codecs.validate(Codecs.validate(
+                    delegate.listOf(), list -> list.size() > max ? DataResult.error(() -> "Recipe has too many ingredients!") : DataResult.success(list)
+            ), list -> list.isEmpty() ? DataResult.error(() -> "Recipe has no ingredients!") : DataResult.success(list));
         }
+
         @Override
-        public FreezerRecipe read(Identifier id, PacketByteBuf buf) {
+        public Codec<FreezerRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public FreezerRecipe read(PacketByteBuf buf) {
             DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
 
-            for (int i = 0; i < inputs.size(); i++) {
+            for(int i = 0; i < inputs.size(); i++) {
                 inputs.set(i, Ingredient.fromPacket(buf));
             }
 
             ItemStack output = buf.readItemStack();
-            return new FreezerRecipe(id, inputs, output);
+            return new FreezerRecipe(inputs, output);
         }
 
         @Override
         public void write(PacketByteBuf buf, FreezerRecipe recipe) {
             buf.writeInt(recipe.getIngredients().size());
-            for (Ingredient ing : recipe.getIngredients()) {
-                ing.write(buf);
+
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                ingredient.write(buf);
             }
-            buf.writeItemStack(recipe.getOutput1());
+
+            buf.writeItemStack(recipe.getResult(null));
         }
     }
 }

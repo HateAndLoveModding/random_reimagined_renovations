@@ -18,14 +18,14 @@ public class CustomDispenserBehavior implements DispenserBehavior {
 
     @Override
     public ItemStack dispense(BlockPointer blockPointer, ItemStack itemStack) {
-        BlockPos dispenserPos = blockPointer.getPos();
-        Direction facing = blockPointer.getBlockState().get(DispenserBlock.FACING);
+        BlockPos dispenserPos = blockPointer.pos();
+        Direction facing = blockPointer.state().get(DispenserBlock.FACING);
         BlockPos targetPos = dispenserPos.offset(facing);
         BlockPos targetPos2 = dispenserPos.offset(facing, 2);
-        BlockState targetState = blockPointer.getBlockState();
-        BlockState belowTargetState = blockPointer.getWorld().getBlockState(targetPos.down());
-        BlockState frontTargetState = blockPointer.getWorld().getBlockState(targetPos2);
-        ServerWorld serverWorld = (ServerWorld) blockPointer.getWorld();
+        BlockState targetState = blockPointer.state();
+        BlockState belowTargetState = blockPointer.world().getBlockState(targetPos.down());
+        BlockState frontTargetState = blockPointer.world().getBlockState(targetPos2);
+        ServerWorld serverWorld = (ServerWorld) blockPointer.world();
 
         if (itemStack.getItem() == Items.WHEAT_SEEDS || itemStack.getItem() == Items.BEETROOT_SEEDS ||
                 itemStack.getItem() == Items.CARROT || itemStack.getItem() == Items.POTATO ||

@@ -11,7 +11,7 @@
     "C": { "item": "minecraft:tnt" }
   },
   "result": {
-    "item": "redstone_reimagined_renovations:bedrock_breaker",
+    "item": "random_reimagined_renovations:bedrock_breaker",
     "count": 1
   }
 }

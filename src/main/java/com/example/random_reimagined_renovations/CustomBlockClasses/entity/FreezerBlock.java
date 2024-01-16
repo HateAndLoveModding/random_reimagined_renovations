@@ -1,5 +1,7 @@
 package com.example.random_reimagined_renovations.CustomBlockClasses.entity;
 
+import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -15,13 +17,16 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-
-import static com.example.random_reimagined_renovations.RandomReimaginedRenovations.FREEZER_BLOCK_ENTITY;
+import org.jetbrains.annotations.Nullable;;
 
 public class FreezerBlock extends BlockWithEntity implements BlockEntityProvider {
     public FreezerBlock(Settings settings) {
         super(settings);
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
     }
 
     @Override
@@ -63,6 +68,7 @@ public class FreezerBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, FREEZER_BLOCK_ENTITY, FreezerBlockEntity::tick);
+        return validateTicker(type, RandomReimaginedRenovations.FREEZER_BLOCK_ENTITY,
+                (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
     }
 }

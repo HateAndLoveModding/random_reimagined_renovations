@@ -10,7 +10,7 @@
     "B": { "item": "minecraft:stick" }
   },
   "result": {
-    "item": "redstone_reimagined_renovations:fan",
+    "item": "random_reimagined_renovations:fan",
     "count": 1
   }
 }

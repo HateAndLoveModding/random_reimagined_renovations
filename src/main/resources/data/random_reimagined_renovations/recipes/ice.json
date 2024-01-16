@@ -1,15 +1,15 @@
 {
-  "type": "redstone_reimagined_renovations:freezer",
+  "type": "random_reimagined_renovations:freezer",
   "ingredients": [
     {
-      "item": "redstone_reimagined_renovations:ice_tray"
+      "item": "random_reimagined_renovations:ice_tray"
     },
     {
       "item": "minecraft:water_bucket"
     }
   ],
   "output": {
-    "item": "redstone_reimagined_renovations:ice_cubes",
+    "item": "random_reimagined_renovations:ice_cubes",
     "count": 6
   }
 }

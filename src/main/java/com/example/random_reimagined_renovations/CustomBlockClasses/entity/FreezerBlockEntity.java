@@ -1,5 +1,6 @@
 package com.example.random_reimagined_renovations.CustomBlockClasses.entity;
 
+import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
 import com.example.random_reimagined_renovations.recipe.FreezerRecipe;
 import com.example.random_reimagined_renovations.screen.FreezerScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -14,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -25,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.example.random_reimagined_renovations.RandomReimaginedRenovations.FREEZER_BLOCK_ENTITY;
 
 public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
@@ -41,7 +41,7 @@ public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHan
     private int maxProgress = 200;
 
     public FreezerBlockEntity(BlockPos pos, BlockState state) {
-        super(FREEZER_BLOCK_ENTITY, pos, state);
+        super(RandomReimaginedRenovations.FREEZER_BLOCK_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -68,11 +68,6 @@ public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHan
     }
 
     @Override
-    public DefaultedList<ItemStack> getItems() {
-        return inventory;
-    }
-
-    @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         buf.writeBlockPos(this.pos);
     }
@@ -80,6 +75,11 @@ public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHan
     @Override
     public Text getDisplayName() {
         return Text.literal("Freezer");
+    }
+
+    @Override
+    public DefaultedList<ItemStack> getItems() {
+        return inventory;
     }
 
     @Override
@@ -102,78 +102,53 @@ public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHan
         return new FreezerScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
     }
 
-    private void resetProgress() {
-        this.progress = 0;
-    }
-
-    public static void tick(World world, BlockPos pos, BlockState state, FreezerBlockEntity entity) {
+    public void tick(World world, BlockPos pos, BlockState state) {
         if(world.isClient()) {
             return;
         }
 
-        if(entity.isOutputSlotEmptyOrReceivable()) {
-            if(hasRecipe(entity)) {
-                entity.progress++;
+        if(isOutputSlotEmptyOrReceivable()) {
+            if(this.hasRecipe()) {
+                this.increaseCraftProgress();
                 markDirty(world, pos, state);
 
-                if (entity.progress >= entity.maxProgress) {
-                    craftItem(entity);
-                    entity.resetProgress();
+                if (hasCraftingFinished()) {
+                    this.craftItem();
+                    this.resetProgress();
                 }
             } else {
-                entity.resetProgress();
+                this.resetProgress();
             }
         } else {
-            entity.resetProgress();
+            this.resetProgress();
             markDirty(world, pos, state);
         }
     }
 
-    private static void craftItem(FreezerBlockEntity entity) {
-        SimpleInventory inventory = new SimpleInventory(entity.size());
-
-        for (int i = 0; i < entity.size(); i++) {
-            inventory.setStack(i, entity.getStack(i));
-        }
-
-        Optional<FreezerRecipe> recipe = Objects.requireNonNull(entity.getWorld()).getRecipeManager().getFirstMatch(FreezerRecipe.Type.INSTANCE, inventory, entity.getWorld());;
-        if(hasRecipe(entity)) {
-            entity.removeStack(ICE_TRAY, 1);
-            entity.removeStack(WATER, 1);
-
-            entity.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().getOutput1().getItem(),
-                    entity.getStack(OUTPUT_SLOT).getCount() + recipe.get().getOutput1().getCount()));
-            entity.setStack(BUCKET, new ItemStack(Items.BUCKET,
-                    entity.getStack(BUCKET).getCount() + 1));
-        }
+    private void resetProgress() {
+        this.progress = 0;
     }
 
-    private static boolean hasRecipe(FreezerBlockEntity entity) {
-        SimpleInventory inventory = new SimpleInventory(entity.size());
-        for (int i = 0; i < entity.size(); i++) {
-            inventory.setStack(i, entity.getStack(i));
-        }
+    private void craftItem() {
+        Optional<RecipeEntry<FreezerRecipe>> recipe = getCurrentRecipe();
 
-        Optional<FreezerRecipe> recipe = Objects.requireNonNull(entity.getWorld()).getRecipeManager().getFirstMatch(FreezerRecipe.Type.INSTANCE, inventory, entity.getWorld());;
+        this.removeStack(ICE_TRAY, 1);
+        this.removeStack(WATER, 1);
 
-        return recipe.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, recipe.get().getOutput1().getItem());
+        this.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().value().getResult(null).getItem(),
+                getStack(OUTPUT_SLOT).getCount() + recipe.get().value().getResult(null).getCount()));
+        this.setStack(BUCKET, new ItemStack(Items.BUCKET,
+                getStack(BUCKET).getCount() + 1));
     }
 
-    private static boolean canInsertItemIntoOutputSlot(SimpleInventory inventory, Item item) {
-        return inventory.getStack(OUTPUT_SLOT).getItem() == item || inventory.getStack(OUTPUT_SLOT).isEmpty() && inventory.getStack(BUCKET).getItem() == item || inventory.getStack(BUCKET).isEmpty();
+    private boolean hasCraftingFinished() {
+        return progress >= maxProgress;
     }
 
-    private static boolean canInsertAmountIntoOutputSlot(SimpleInventory inventory) {
-        return inventory.getStack(OUTPUT_SLOT).getCount() <= inventory.getStack(OUTPUT_SLOT).getMaxCount() && inventory.getStack(BUCKET).getCount() + 1 <= inventory.getStack(BUCKET).getMaxCount();
+    private void increaseCraftProgress() {
+        progress++;
     }
 
-    private boolean isOutputSlotEmptyOrReceivable() {
-        return this.getStack(OUTPUT_SLOT).isEmpty() || this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount() && this.getStack(BUCKET).isEmpty() || this.getStack(BUCKET).getCount() < this.getStack(BUCKET).getMaxCount();
-    }
-}
-
-/*
     @Override
     public void markDirty() {
         assert world != null;
@@ -181,67 +156,33 @@ public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHan
         super.markDirty();
     }
 
+    private boolean hasRecipe() {
+        Optional<RecipeEntry<FreezerRecipe>> recipe = getCurrentRecipe();
+
+        return recipe.isPresent() && canInsertAmountIntoOutputSlot(recipe.get().value().getResult(null))
+                && canInsertItemIntoOutputSlot(recipe.get().value().getResult(null).getItem());
+    }
+
     private Optional<RecipeEntry<FreezerRecipe>> getCurrentRecipe() {
         SimpleInventory inv = new SimpleInventory(this.size());
-
         for(int i = 0; i < this.size(); i++) {
             inv.setStack(i, this.getStack(i));
         }
 
         return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(FreezerRecipe.Type.INSTANCE, inv, getWorld());
-    }
- */
-/*
-    private static void craftItem(GemInfusingBlockEntity entity) {
-        SimpleInventory inventory = new SimpleInventory(entity.size());
-        for (int i = 0; i < entity.size(); i++) {
-            inventory.setStack(i, entity.getStack(i));
-        }
 
-        Optional<GemInfusingRecipe> recipe = entity.getWorld().getRecipeManager()
-                .getFirstMatch(GemInfusingRecipe.Type.INSTANCE, inventory, entity.getWorld());
 
-        if(hasRecipe(entity)) {
-            entity.removeStack(1, 1);
-
-            entity.setStack(2, new ItemStack(recipe.get().getOutput().getItem(),
-                    entity.getStack(2).getCount() + 1));
-
-            entity.resetProgress();
-        }
     }
 
-    private static boolean hasRecipe(GemInfusingBlockEntity entity) {
-        SimpleInventory inventory = new SimpleInventory(entity.size());
-        for (int i = 0; i < entity.size(); i++) {
-            inventory.setStack(i, entity.getStack(i));
-        }
-
-        Optional<GemInfusingRecipe> match = entity.getWorld().getRecipeManager()
-                .getFirstMatch(GemInfusingRecipe.Type.INSTANCE, inventory, entity.getWorld());
-
-        return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getOutput().getItem());
+    private boolean canInsertItemIntoOutputSlot(Item item) {
+        return this.getStack(OUTPUT_SLOT).getItem() == item || this.getStack(OUTPUT_SLOT).isEmpty() && this.getStack(BUCKET).getItem() == item || this.getStack(BUCKET).isEmpty();
     }
 
- */
-    /*
-
-    public static void tick(World world, BlockPos blockPos, BlockState state, GemInfusingBlockEntity entity) {
-        if(world.isClient()) {
-            return;
-        }
-
-        if(hasRecipe(entity)) {
-            entity.progress++;
-            markDirty(world, blockPos, state);
-            if(entity.progress >= entity.maxProgress) {
-                craftItem(entity);
-            }
-        } else {
-            entity.resetProgress();
-            markDirty(world, blockPos, state);
-        }
+    private boolean canInsertAmountIntoOutputSlot(ItemStack result) {
+        return this.getStack(OUTPUT_SLOT).getCount() + result.getCount() <= getStack(OUTPUT_SLOT).getMaxCount() && this.getStack(BUCKET).getCount() + 1 <= getStack(BUCKET).getMaxCount();
     }
 
-     */
+    private boolean isOutputSlotEmptyOrReceivable() {
+        return this.getStack(OUTPUT_SLOT).isEmpty() || this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount() && this.getStack(BUCKET).isEmpty() || this.getStack(BUCKET).getCount() < this.getStack(BUCKET).getMaxCount();
+    }
+}
