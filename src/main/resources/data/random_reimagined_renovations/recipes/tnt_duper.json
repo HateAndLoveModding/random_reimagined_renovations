@@ -6,7 +6,7 @@
     "CDC"
   ],
   "key": {
-    "A": { "tag": "minecraft:trap_doors" },
+    "A": { "tag": "minecraft:wooden_trapdoors" },
     "B": { "item": "minecraft:sticky_piston" },
     "C": { "item": "minecraft:tnt" },
     "D": { "item": "minecraft:obsidian" },
