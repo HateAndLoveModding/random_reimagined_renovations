@@ -21,9 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RandomReimaginedRenovations implements ModInitializer {
-	//make shift clicking and hoppers work with freezer
-	//Update armor notifications
-	//update tnt duper crafting recipe to minecraft:wooden_trapdoors
+	//Fix can extract method and see if it works with shift clicking
 
 	//Make sure creature carrier trades are correct
     public static final Logger LOGGER = LoggerFactory.getLogger("random_reimagined_renovations");

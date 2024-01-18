@@ -1,5 +1,6 @@
 package com.example.random_reimagined_renovations.recipe;
 
+import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.inventory.SimpleInventory;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 public class FreezerRecipe implements Recipe<SimpleInventory> {
     private final Identifier id;
     private final ItemStack output;
-    private final DefaultedList<Ingredient> recipeItems;
+    public final DefaultedList<Ingredient> recipeItems;
 
     public FreezerRecipe(Identifier id, DefaultedList<Ingredient> ingredients, ItemStack itemStack) {
         this.id = id;
@@ -30,6 +31,14 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
         }
         return recipeItems.get(0).test(inventory.getStack(0)) &&
                 recipeItems.get(1).test(inventory.getStack(1));
+    }
+
+    public DefaultedList<Ingredient> match0() {
+        return recipeItems;
+    }
+
+    public Ingredient match1() {
+        return recipeItems.get(1);
     }
 
     @Override
@@ -108,7 +117,6 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
     public boolean isEmpty() {
         return Recipe.super.isEmpty();
     }
-
 
     public static class Serializer implements RecipeSerializer<FreezerRecipe> {
         public static final Serializer INSTANCE = new Serializer();
