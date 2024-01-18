@@ -21,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RandomReimaginedRenovations implements ModInitializer {
-	//Fix can extract method and see if it works with shift clicking
-
 	//Make sure creature carrier trades are correct
     public static final Logger LOGGER = LoggerFactory.getLogger("random_reimagined_renovations");
 	public static final String MOD_ID = "random_reimagined_renovations";
