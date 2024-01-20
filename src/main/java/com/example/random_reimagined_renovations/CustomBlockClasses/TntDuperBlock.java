@@ -7,14 +7,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class TntDuperBlock extends Block {
+    public long currentTick;
+    public long previousTick;
     public TntDuperBlock(Settings settings) {
         super(settings);
     }
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-        if (world.isReceivingRedstonePower(pos)) {
+        currentTick = world.getTime();
+        if (world.isReceivingRedstonePower(pos) && currentTick > previousTick + 20) {
             BlockPos tntPos = pos.down();
-            world.spawnEntity(new TntEntity(world, tntPos.getX() + 0.5, tntPos.getY(), tntPos.getZ() + 0.5, null));
+            world.spawnEntity(new TntEntity(world, tntPos.getX() + .5, tntPos.getY(), tntPos.getZ() + .5, null));
+            previousTick = currentTick;
         }
     }
 
