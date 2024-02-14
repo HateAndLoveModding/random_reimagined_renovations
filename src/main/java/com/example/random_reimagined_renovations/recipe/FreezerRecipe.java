@@ -54,6 +54,13 @@ public class FreezerRecipe implements Recipe<SimpleInventory> {
         list.addAll(recipeItems);
         return list;
     }
+    public List<Ingredient> match0() {
+        return recipeItems;
+    }
+
+    public Ingredient match1() {
+        return recipeItems.get(1);
+    }
 
     @Override
     public RecipeSerializer<?> getSerializer() {

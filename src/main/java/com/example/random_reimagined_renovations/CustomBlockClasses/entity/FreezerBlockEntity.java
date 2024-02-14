@@ -1,5 +1,6 @@
 package com.example.random_reimagined_renovations.CustomBlockClasses.entity;
 
+import com.example.random_reimagined_renovations.Main.CustomItems;
 import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
 import com.example.random_reimagined_renovations.recipe.FreezerRecipe;
 import com.example.random_reimagined_renovations.screen.FreezerScreenHandler;
@@ -22,6 +23,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +67,24 @@ public class FreezerBlockEntity extends BlockEntity implements ExtendedScreenHan
                 return 2;
             }
         };
+    }
+
+    @Override
+    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
+        if (side == Direction.DOWN) {
+            return false;
+        } else {
+            return slot == 0 && stack.getItem().equals(CustomItems.ICE_TRAY) || slot == 1 && stack.getItem().equals(Items.WATER_BUCKET);
+        }
+    }
+
+    @Override
+    public boolean canExtract(int slot, ItemStack stack, Direction side) {
+        if(side == Direction.DOWN) {
+            return slot == 2 || slot == 3;
+        } else {
+            return false;
+        }
     }
 
     @Override

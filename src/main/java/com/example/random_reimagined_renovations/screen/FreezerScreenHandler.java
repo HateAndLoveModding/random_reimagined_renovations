@@ -1,11 +1,14 @@
 package com.example.random_reimagined_renovations.screen;
 
 import com.example.random_reimagined_renovations.CustomBlockClasses.entity.FreezerBlockEntity;
+import com.example.random_reimagined_renovations.Main.CustomItems;
+import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
@@ -61,9 +64,21 @@ public class FreezerScreenHandler extends ScreenHandler {
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
+
         if (slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
             newStack = originalStack.copy();
+            if (slot.inventory.size() == 4) {
+                slot.setStack(ItemStack.EMPTY);
+            } else if (originalStack.getItem() == Items.WATER_BUCKET) {
+                if (!this.insertItem(originalStack, 1, 2, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (originalStack.getItem() == CustomItems.ICE_TRAY) {
+                if (!this.insertItem(originalStack, 0, 1, true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
             if (invSlot < this.inventory.size()) {
                 if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
@@ -71,7 +86,6 @@ public class FreezerScreenHandler extends ScreenHandler {
             } else if (!this.insertItem(originalStack, 0, this.inventory.size(), false)) {
                 return ItemStack.EMPTY;
             }
-
             if (originalStack.isEmpty()) {
                 slot.setStack(ItemStack.EMPTY);
             } else {
