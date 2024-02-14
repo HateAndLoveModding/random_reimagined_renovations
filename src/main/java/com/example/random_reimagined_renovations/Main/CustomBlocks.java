@@ -1,6 +1,7 @@
 package com.example.random_reimagined_renovations.Main;
 
 import com.example.random_reimagined_renovations.CustomBlockClasses.BedrockBreaker;
+import com.example.random_reimagined_renovations.CustomBlockClasses.CloudBlock;
 import com.example.random_reimagined_renovations.CustomBlockClasses.TntDuperBlock;
 import com.example.random_reimagined_renovations.CustomBlockClasses.entity.FreezerBlock;
 import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
@@ -25,10 +26,11 @@ public class CustomBlocks {
             new BedrockBreaker(FabricBlockSettings.copy(net.minecraft.block.Blocks.OBSIDIAN).strength(2.5f).hardness(2.5f).requiresTool()), ItemGroups.REDSTONE);
     public static final Block FREEZER = registerBlock("freezer",
             new FreezerBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()), ItemGroups.FUNCTIONAL);
+    public static final Block CLOUD_BLOCK = registerBlock("cloud_block",
+            new CloudBlock(FabricBlockSettings.copy(Blocks.COBWEB).strength(1f).hardness(5f).dropsNothing().nonOpaque()), ItemGroups.FUNCTIONAL);
     private static Block registerBlock(String name, Block block, RegistryKey<ItemGroup> tab) {
         registerBlockItem(name, block, tab);
-        return Registry.register(Registries.BLOCK, new Identifier(RandomReimaginedRenovations.MOD_ID, name), block);
-    }
+        return Registry.register(Registries.BLOCK, new Identifier(RandomReimaginedRenovations.MOD_ID, name), block);}
     private static Item registerBlockItem(String name, Block block, RegistryKey<ItemGroup> tab) {
         Item item = Registry.register(Registries.ITEM, new Identifier(RandomReimaginedRenovations.MOD_ID, name),
                 new BlockItem(block, new FabricItemSettings()));

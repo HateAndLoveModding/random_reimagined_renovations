@@ -1,5 +1,6 @@
 package com.example.random_reimagined_renovations.Main;
 
+import com.example.random_reimagined_renovations.CustomItemClasses.CloudItem;
 import com.example.random_reimagined_renovations.CustomItemClasses.FiniteWater;
 import com.example.random_reimagined_renovations.CustomItemClasses.InfiniteWater;
 import com.example.random_reimagined_renovations.RandomReimaginedRenovations;
@@ -26,6 +27,8 @@ public class CustomItems {
             new Item(new FabricItemSettings()));
     public static final Item ICE_TRAY = registerItem("ice_tray",
             new Item(new FabricItemSettings()));
+    public static final Item CLOUD_ITEM = registerItem("cloud_item",
+            new CloudItem(new FabricItemSettings()));
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(RandomReimaginedRenovations.MOD_ID, name), item);
     }
